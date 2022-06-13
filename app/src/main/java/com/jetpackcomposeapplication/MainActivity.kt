@@ -1,84 +1,108 @@
 package com.jetpackcomposeapplication
-
 import android.os.Bundle
-import android.view.animation.OvershootInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.delay
+import com.jetpackcomposeapplication.ui.theme.BackgroundColor
+import com.jetpackcomposeapplication.ui.theme.ProjectLoginTheme
+import com.jetpackcomposeapplication.ui.theme.TextFieldColor
+import com.jetpackcomposeapplication.ui.theme.TextFieldTextColor
+import androidx.compose.material.Text as Text
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Surface(color = Color.White, modifier = Modifier.fillMaxSize()) {
-                Navigation()
+            ProjectLoginTheme {
+                loginScreen()
+
             }
         }
     }
 }
 @Composable
-fun Navigation() {
-    val navController = rememberNavController()
-    NavHost(navController = navController,
-        startDestination = "splash_screen") {
-        composable("splash_screen") {
-            SplashScreen(navController = navController)
-        }
-
-        // Main Screen
-        composable("main_screen") {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Main Screen", color = Color.Black, fontSize = 24.sp)
-            }
+fun loginScreen(){
+    Surface(modifier = Modifier.fillMaxSize(),color = MaterialTheme.colors.BackgroundColor){
+        Column (modifier = Modifier.fillMaxSize(),verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally){
+            WelcomeText()
+            PurposeImage()
+            text_field(InputType = KeyboardType.Email,"E-mail address",IconImage = painterResource(id = android.R.drawable.ic_dialog_email))
+            SignIn()
+            ForgotPasswordText()
         }
     }
 }
 @Composable
-fun SplashScreen(navController: NavController) {
-    val scale = remember {
-        androidx.compose.animation.core.Animatable(0f)
-    }
+fun WelcomeText(){
+    Text(text = "Welcome To Maps",
+        color = Color.White,
+        fontSize = 25.sp,
+        modifier = Modifier.padding(top = 40.dp)
+    )
+}
+@Composable
+fun PurposeImage(){
+    Image(painter = painterResource(id = android.R.drawable.ic_menu_mylocation), contentDescription = "LocationPin",
+        modifier = Modifier.size(300.dp))
+}
+@Composable
+fun text_field(InputType : KeyboardType,placeholder : String,IconImage : Painter){
+    var TextFieldEmailState = remember{mutableStateOf("")}
 
-    // Animation
-    LaunchedEffect(key1 = true) {
-        scale.animateTo(
-            targetValue = 0.7f,
-            // tween Animation
-            animationSpec = tween(
-                durationMillis = 800,
-                easing = {
-                    OvershootInterpolator(4f).getInterpolation(it)
-                }))
-        // Customize the delay time
-        delay(3000L)
-        navController.navigate("main_screen")
+    TextField(value = TextFieldEmailState.value,
+        onValueChange = { newInput -> TextFieldEmailState.value = newInput },
+        leadingIcon = {Image(painter = painterResource(id = android.R.drawable.ic_dialog_email), contentDescription = "email")},
+        label = {Text(text = "E-mail address",color = MaterialTheme.colors.TextFieldTextColor)},
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        modifier = Modifier
+            .padding(top = 25.dp)
+            .background(color = MaterialTheme.colors.TextFieldColor)
+    )
+    var TextFieldPasswordState = remember{mutableStateOf("")}
+    TextField(value = TextFieldPasswordState.value,
+        onValueChange = { newInput -> TextFieldPasswordState.value = newInput },
+        leadingIcon = {Image(painter = painterResource(id = android.R.drawable.ic_lock_idle_lock), contentDescription = "password")},
+        label = {Text(text = "Password",color = MaterialTheme.colors.TextFieldTextColor)},
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        modifier = Modifier
+            .padding(top = 25.dp)
+            .background(color = MaterialTheme.colors.TextFieldColor)
+    )
+}
+@Composable
+fun SignIn(){
+    Button(onClick = {},modifier = Modifier
+        .padding(top = 25.dp)
+        .requiredWidth(277.dp)){
+        Text(text = "Sign In")
     }
-
-    // Image
-    Box(contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()) {
-        // Change the logo
-        Image(painter = painterResource(id = R.drawable.android_logo),
-            contentDescription = "Logo",
-            modifier = Modifier.scale(scale.value))
+}
+@Composable
+fun ForgotPasswordText(){
+    Text(text = "Forgot Password ?",color = MaterialTheme.colors.TextFieldTextColor,
+        modifier = Modifier.padding(top = 70.dp))
+}
+@Preview(showBackground = true)
+@Composable
+fun DefaultPreview() {
+    ProjectLoginTheme {
+        loginScreen()
     }
 }
