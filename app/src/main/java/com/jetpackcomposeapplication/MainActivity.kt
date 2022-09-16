@@ -75,7 +75,7 @@ fun text_field(InputType : KeyboardType,placeholder : String,IconImage : Painter
             .padding(top = 25.dp)
             .background(color = MaterialTheme.colors.TextFieldColor)
     )
-    var TextFieldPasswordState = remember{mutableStateOf("")}
+    val TextFieldPasswordState = remember{mutableStateOf("")}
     TextField(value = TextFieldPasswordState.value,
         onValueChange = { newInput -> TextFieldPasswordState.value = newInput },
         leadingIcon = {Image(painter = painterResource(id = android.R.drawable.ic_lock_idle_lock), contentDescription = "password")},
